@@ -176,9 +176,10 @@
         document.getElementById('center-overlay').style.display = 'flex';
     }
 
-    function applyCoupon() { if (document.getElementById('coupon-code').value === '사장님나이스') { const bonusAmount = Math.floor(s.totalProfit * 0.1); updateFinalUI(bonusAmount); } else { alert("쿠폰 코드를 확인하세요."); } }
+    function applyCoupon() { if (document.getElementById('coupon-code').value ==='0318') { const bonusAmount = Math.floor(s.totalProfit * 0.1); updateFinalUI(bonusAmount); } else { alert("쿠폰 코드를 확인하세요."); } }
     function updateMainUI() { document.getElementById('day-num').innerText = Math.min(s.day, 30); document.getElementById('money-display').innerText = s.money.toLocaleString() + "원"; }
     init();
 </script>
 </body>
+
 </html>
