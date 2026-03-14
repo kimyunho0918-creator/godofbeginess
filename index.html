@@ -92,7 +92,7 @@
     // [업데이트] 이벤트 발생량을 대폭 늘림 (기존 7회 -> 13회)
     function setWeeklyEvents() {
         s.eventDays = [];
-        const count = 13; 
+        const count = 16; 
         while(s.eventDays.length < count) {
             let d = Math.floor(Math.random() * 28) + 1;
             if(!s.eventDays.includes(d)) s.eventDays.push(d);
