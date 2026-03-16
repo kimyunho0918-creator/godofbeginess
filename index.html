@@ -3,66 +3,158 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>장사의 신: 전설의 탄생 v4.8</title>
+    <title>장사의 신: 얼티밋 대시보드 v6.0</title>
     <style>
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
         :root {
-            --primary: #10b981; --secondary: #3b82f6; --accent: #fbbf24;
-            --danger: #f43f5e; --dark-bg: #0f172a; --card-bg: #1e293b;
-            --text-main: #f8fafc; --text-dim: #94a3b8; --border: #334155;
+            --primary: #10b981; --primary-hover: #059669;
+            --secondary: #3b82f6; --secondary-hover: #2563eb;
+            --accent: #fbbf24; --danger: #f43f5e;
+            --dark-bg: #09090b; --panel-bg: rgba(30, 41, 59, 0.7);
+            --text-main: #f8fafc; --text-dim: #94a3b8;
+            --border: rgba(255, 255, 255, 0.1);
         }
-        * { box-sizing: border-box; font-family: 'Pretendard', sans-serif; outline: none; }
-        body { background: var(--dark-bg); margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; color: var(--text-main); }
-        #game-frame { background: var(--card-bg); width: 95vw; max-width: 1100px; height: 90vh; border-radius: 2.5rem; display: flex; flex-direction: column; position: relative; overflow: hidden; border: 2px solid var(--border); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
+        * { box-sizing: border-box; font-family: 'Pretendard', sans-serif; outline: none; margin: 0; padding: 0; }
+        body { 
+            background: radial-gradient(circle at top left, #1e1b4b, var(--dark-bg)), url('https://www.transparenttextures.com/patterns/stardust.png'); 
+            display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; color: var(--text-main); 
+        }
+        
+        /* 메인 프레임 (대시보드 스타일) */
+        #game-frame { 
+            background: var(--panel-bg); width: 95vw; max-width: 1200px; height: 90vh; 
+            border-radius: 2rem; display: flex; flex-direction: column; position: relative; 
+            overflow: hidden; border: 1px solid var(--border); box-shadow: 0 30px 60px rgba(0,0,0,0.6); 
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+        }
         .hidden { display: none !important; }
         
-        .loader-container { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 200px; }
-        .spinner { width: 50px; height: 50px; border: 5px solid rgba(255,255,255,0.1); border-top: 5px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        .game-header { background: rgba(255,255,255,0.02); padding: 1.2rem 2.5rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border); }
-        .main-content { display: flex; flex: 1; overflow: hidden; }
-        .log-area { flex: 1.2; padding: 1.5rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.8rem; border-right: 1px solid var(--border); }
-        .report-area { flex: 0.8; padding: 1.5rem; background: rgba(0,0,0,0.2); overflow-y: auto; }
-        .log-card { background: rgba(255,255,255,0.03); padding: 1rem; border-radius: 0.8rem; border-left: 5px solid var(--secondary); font-size: 0.9rem; }
-        .overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.96); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 20px; }
-        .modal-card { background: var(--card-bg); width: 100%; max-width: 550px; padding: 3rem; border-radius: 2rem; border: 2px solid var(--border); text-align: center; }
-        .ending-card { max-width: 800px; width: 90%; animation: zoomIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        @keyframes zoomIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-
-        .action-btn { width: 100%; background: var(--primary); color: white; border: none; padding: 1.2rem; border-radius: 1rem; font-size: 1.4rem; font-weight: 900; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 0 #065f46; margin-top: 10px; }
-        .choice-btn { width: 100%; padding: 1.2rem; border-radius: 1rem; border: none; font-size: 1.1rem; font-weight: 800; cursor: pointer; color: white; transition: 0.2s; }
-        .coupon-input { width: 100%; padding: 1.2rem; border-radius: 1rem; border: 2px solid var(--accent); background: #0f172a; color: var(--accent); font-size: 1.5rem; text-align: center; margin: 1.5rem 0; font-weight: 900; }
+        /* 상단 헤더바 */
+        .game-header { 
+            background: rgba(0,0,0,0.3); padding: 1.5rem 2.5rem; display: flex; justify-content: space-between; 
+            align-items: center; border-bottom: 1px solid var(--border); 
+        }
+        .header-stat { display: flex; flex-direction: column; align-items: center; }
+        .header-stat span { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
+        .header-stat b { font-size: 1.8rem; font-weight: 900; }
         
-        .opt-btn { background: rgba(255,255,255,0.05); border: 2px solid var(--border); color: var(--text-main); padding: 1rem; border-radius: 1rem; cursor: pointer; margin-bottom: 10px; width: 100%; text-align: center; transition: 0.2s; }
-        .opt-btn.selected { background: var(--secondary); border-color: var(--secondary); transform: translateY(-2px); }
+        /* 프로그레스 바 */
+        .progress-container { width: 200px; background: rgba(255,255,255,0.1); height: 8px; border-radius: 4px; overflow: hidden; margin-top: 5px; }
+        .progress-bar { height: 100%; background: var(--secondary); transition: width 0.3s ease; }
+
+        /* 메인 레이아웃 */
+        .main-content { display: flex; flex: 1; overflow: hidden; }
+        
+        /* 좌측: 컨트롤 및 날씨/상태 패널 */
+        .control-panel { flex: 1; padding: 2rem; display: flex; flex-direction: column; gap: 1.5rem; border-right: 1px solid var(--border); background: rgba(0,0,0,0.2); }
+        .status-card { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 1.5rem; padding: 1.5rem; text-align: center; }
+        .weather-icon { font-size: 3rem; margin-bottom: 10px; animation: float 3s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+        /* 중앙: 실시간 로그 */
+        .log-area { flex: 1.5; padding: 2rem; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem; scroll-behavior: smooth; }
+        .log-card { 
+            background: rgba(255,255,255,0.05); padding: 1.2rem; border-radius: 1rem; 
+            border-left: 5px solid var(--secondary); font-size: 1rem; line-height: 1.5;
+            animation: slideInLeft 0.4s ease-out forwards; opacity: 0; transform: translateX(-20px);
+        }
+        @keyframes slideInLeft { to { opacity: 1; transform: translateX(0); } }
+
+        /* 우측: 주간 리포트 */
+        .report-area { flex: 1; padding: 2rem; background: rgba(0,0,0,0.3); border-left: 1px solid var(--border); overflow-y: auto; }
+        .week-report-card { 
+            background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01)); 
+            border: 1px solid var(--border); padding: 1.5rem; border-radius: 1.2rem; margin-bottom: 1rem; 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        /* 버튼 및 입력창 */
+        .action-btn { 
+            width: 100%; background: linear-gradient(135deg, var(--primary), var(--primary-hover)); 
+            color: white; border: none; padding: 1.5rem; border-radius: 1.2rem; font-size: 1.3rem; 
+            font-weight: 900; cursor: pointer; transition: all 0.2s; box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3); text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        .action-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 25px rgba(16, 185, 129, 0.4); }
+        .action-btn:active { transform: translateY(2px); box-shadow: 0 5px 10px rgba(16, 185, 129, 0.3); }
+        
+        .choice-btn { width: 100%; padding: 1.2rem; border-radius: 1rem; border: none; font-size: 1.1rem; font-weight: 800; cursor: pointer; color: white; transition: 0.2s; margin-top: 10px; }
+        .choice-btn:hover { filter: brightness(1.1); transform: scale(1.02); }
+
+        /* 오버레이 모달 */
+        .overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 20px; }
+        .modal-card { background: var(--card-bg); width: 100%; max-width: 600px; padding: 3rem; border-radius: 2rem; border: 1px solid rgba(255,255,255,0.2); text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.8); animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        /* 셋업 화면 */
+        #setup-screen { flex: 1; padding: 4rem; overflow-y: auto; display: flex; flex-direction: column; justify-content: center; }
+        .setup-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-bottom: 3rem; }
+        .setup-card { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 1.5rem; padding: 2rem; backdrop-filter: blur(10px); }
+        .setup-card h4 { color: var(--text-dim); margin-bottom: 1.5rem; font-size: 1.1rem; letter-spacing: 2px; }
+        .opt-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-main); padding: 1.2rem; border-radius: 1rem; cursor: pointer; margin-bottom: 15px; width: 100%; text-align: left; transition: all 0.2s; display: flex; justify-content: space-between; align-items: center; }
+        .opt-btn:hover { background: rgba(255,255,255,0.1); }
+        .opt-btn.selected { background: rgba(59, 130, 246, 0.2); border-color: var(--secondary); box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
+
+        /* 로더 */
+        .spinner { width: 60px; height: 60px; border: 6px solid rgba(255,255,255,0.1); border-top: 6px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px; }
+
+        /* 스크롤바 커스텀 */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
     </style>
 </head>
 <body>
 
 <div id="game-frame">
-    <div id="setup-screen" style="flex:1; padding:2.5rem; overflow-y:auto;">
-        <h1 style="text-align:center; color:var(--accent); font-size: 3rem; margin-bottom: 2rem;">장사의 신</h1>
-        <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:1.5rem; margin-bottom:2rem;">
-            <div style="background:rgba(255,255,255,0.02); padding:1.5rem; border-radius:1.5rem; border:1px solid var(--border);"><h4>업종</h4><div id="type-list"></div></div>
-            <div style="background:rgba(255,255,255,0.02); padding:1.5rem; border-radius:1.5rem; border:1px solid var(--border);"><h4>상권</h4><div id="loc-list"></div></div>
-            <div style="background:rgba(255,255,255,0.02); padding:1.5rem; border-radius:1.5rem; border:1px solid var(--border);"><h4>가격</h4><div id="price-list"></div></div>
+    <div id="setup-screen">
+        <div style="text-align:center; margin-bottom: 3rem;">
+            <h1 style="color:var(--accent); font-size: 4rem; font-weight:900; letter-spacing: -2px; text-shadow: 0 10px 20px rgba(251, 191, 36, 0.3);">장사의 신</h1>
+            <p style="color:var(--text-dim); font-size:1.2rem; margin-top:10px;">궁극의 외식업 경영 시뮬레이션</p>
         </div>
-        <button class="action-btn" style="background:var(--secondary); height:80px; font-size:1.8rem;" onclick="startGame()">전설적인 영업 시작</button>
+        <div class="setup-grid">
+            <div class="setup-card"><h4>1. 업종 선택</h4><div id="type-list"></div></div>
+            <div class="setup-card"><h4>2. 상권 진입</h4><div id="loc-list"></div></div>
+            <div class="setup-card"><h4>3. 가격 전략</h4><div id="price-list"></div></div>
+        </div>
+        <button class="action-btn" style="background:linear-gradient(135deg, var(--secondary), #1e40af); max-width: 400px; margin: 0 auto;" onclick="startGame()">영업 개시</button>
     </div>
 
     <div id="play-screen" class="hidden" style="height:100%; display:flex; flex-direction:column;">
         <div class="game-header">
-            <div>Day <b id="day-num" style="font-size:1.8rem; color:var(--secondary);">1</b> / 30</div>
-            <div id="money-display" style="color:var(--accent); font-weight:900; font-size:1.8rem;">10,000,000원</div>
-        </div>
-        <div class="main-content">
-            <div id="log-box" class="log-area"></div>
-            <div id="report-list" class="report-area">
-                <h3 style="color:var(--accent); font-size:1rem; margin-bottom:1.5rem; text-align:center; border-bottom:1px solid var(--border); padding-bottom:10px;">📊 주간 실적 리포트</h3>
+            <div class="header-stat">
+                <span>진행 상황</span>
+                <div style="display:flex; align-items:center; gap:15px;">
+                    <b id="day-num" style="color:var(--secondary);">Day 1</b>
+                    <div class="progress-container"><div id="progress-bar" class="progress-bar" style="width: 3.33%;"></div></div>
+                </div>
+            </div>
+            <div class="header-stat">
+                <span>현재 자산 (KRW)</span>
+                <b id="money-display" style="color:var(--accent);">10,000,000</b>
             </div>
         </div>
-        <div class="control-bar"><button class="action-btn" id="run-btn" onclick="runDay()">마감 및 정산</button></div>
+        <div class="main-content">
+            <div class="control-panel">
+                <div class="status-card">
+                    <div id="weather-icon" class="weather-icon">☀️</div>
+                    <div style="font-size:0.9rem; color:var(--text-dim); margin-bottom:5px;">오늘의 날씨</div>
+                    <b id="weather-text" style="font-size:1.2rem;">맑음 (손님 10% 증가)</b>
+                </div>
+                <div class="status-card" style="flex:1; display:flex; flex-direction:column; justify-content:center;">
+                    <p style="color:var(--text-dim); font-size:0.95rem; margin-bottom:20px;">영업 준비가 완료되었습니다.<br>손님을 맞이하세요!</p>
+                    <button class="action-btn" id="run-btn" onclick="runDay()">오늘의 영업 시작</button>
+                </div>
+            </div>
+
+            <div id="log-box" class="log-area">
+                <div style="text-align:center; color:var(--text-dim); margin-top:20px; opacity:0.5;">- 시스템 로그 -</div>
+            </div>
+
+            <div class="report-area">
+                <h3 style="color:var(--accent); font-size:1rem; margin-bottom:1.5rem; border-bottom:1px solid var(--border); padding-bottom:15px;">📊 주간 실적 리포트</h3>
+                <div id="report-list"></div>
+            </div>
+        </div>
     </div>
 
     <div id="center-overlay" class="overlay">
@@ -72,120 +164,264 @@
 
 <script>
     const BIZ_DATA = {
-        '치킨': { p:[10000, 20000, 30000], g:[95, 45, 38], m:0.48, locs:[{n:'홍대입구', r:6000000, l:250000, w:[1.1, 1.4]}, {n:'성안길', r:4000000, l:150000, w:[1.2, 1.5]}, {n:'3지구', r:2000000, l:80000, w:[1.2, 1.3]}] },
+        '치킨': { p:[10000, 20000, 30000], g:[95, 45, 38], m:0.48, locs:[{n:'홍대입구', r:6000000, l:250000, w:[1.1, 1.4]}, {n:'성안길', r:4000000, l:150000, w:[1.0, 1.3]}, {n:'3지구', r:2000000, l:80000, w:[0.8, 1.1]}] },
         '카페': { p:[2000, 4000, 6000], g:[400, 250, 130], m:0.65, locs:[{n:'홍대입구', r:6000000, l:250000, w:[1.2, 1.5]}, {n:'성안길', r:4000000, l:180000, w:[1.1, 1.4]}, {n:'3지구', r:2000000, l:90000, w:[1.0, 1.2]}] },
-        '토스트': { p:[2500, 4000, 5500], g:[350, 250 ,165], m:0.52, locs:[{n:'홍대입구', r:6000000, l:200000, w:[1.3, 1.7]}, {n:'성안길', r:4000000, l:120000, w:[1.0, 1.3]}, {n:'3지구', r:2000000, l:60000, w:[0.9, 1.2]}] }
+        '토스트': { p:[2500, 4000, 5500], g:[350, 250, 165], m:0.52, locs:[{n:'홍대입구', r:6000000, l:200000, w:[1.3, 1.7]}, {n:'성안길', r:4000000, l:120000, w:[1.0, 1.3]}, {n:'3지구', r:2000000, l:60000, w:[0.9, 1.2]}] }
     };
 
-    let s = { day:1, money:10000000, totalProfit:0, type:'', loc:null, price:0, pIdx:0, weekly:0, nextDayMod: 1.0, eventDays:[] };
+    const WEATHER_DATA = [
+        { i: '☀️', t: '맑음', m: 1.1, desc: '손님 10% 증가' },
+        { i: '☁️', t: '흐림', m: 1.0, desc: '평범한 하루' },
+        { i: '🌧️', t: '비', m: 0.8, desc: '손님 20% 감소' },
+        { i: '❄️', t: '눈', m: 0.9, desc: '손님 10% 감소' }
+    ];
+
+    let s = { day:1, money:10000000, totalProfit:0, type:'', loc:null, price:0, pIdx:0, weekly:0, nextDayMod: 1.0, eventDays:[], todayWeather: null };
 
     function init() {
         const tBox = document.getElementById('type-list');
         Object.keys(BIZ_DATA).forEach(k => {
-            let b = document.createElement('div'); b.className = 'opt-btn t-o'; b.innerText = k;
+            let b = document.createElement('div'); b.className = 'opt-btn t-o'; 
+            b.innerHTML = `<span>${k}</span><span>🍗</span>`;
+            if(k==='카페') b.innerHTML = `<span>${k}</span><span>☕</span>`;
+            if(k==='토스트') b.innerHTML = `<span>${k}</span><span>🥪</span>`;
             b.onclick = () => { s.type = k; updateUIBtn('.t-o', b); renderLocs(); };
             tBox.appendChild(b);
         });
         setWeeklyEvents();
+        setWeather();
     }
 
-    // [업데이트] 이벤트 발생량을 대폭 늘림 (기존 7회 -> 13회)
     function setWeeklyEvents() {
         s.eventDays = [];
-        const count = 16; 
-        while(s.eventDays.length < count) {
+        while(s.eventDays.length < 15) {
             let d = Math.floor(Math.random() * 28) + 1;
             if(!s.eventDays.includes(d)) s.eventDays.push(d);
         }
     }
 
-    function renderLocs() { const lBox = document.getElementById('loc-list'); lBox.innerHTML = ''; BIZ_DATA[s.type].locs.forEach((l) => { let b = document.createElement('div'); b.className = 'opt-btn l-o'; b.innerHTML = `<b>${l.n}</b><br><small>${l.r/10000}만</small>`; b.onclick = () => { s.loc = l; updateUIBtn('.l-o', b); renderPrices(); }; lBox.appendChild(b); }); }
-    function renderPrices() { const pBox = document.getElementById('price-list'); pBox.innerHTML = ''; ['실속', '표준', '프리미엄'].forEach((n, i) => { let b = document.createElement('div'); b.className = 'opt-btn p-o'; b.innerHTML = `<b>${n}</b><br><small>${BIZ_DATA[s.type].p[i].toLocaleString()}원</small>`; b.onclick = () => { s.price = BIZ_DATA[s.type].p[i]; s.pIdx = i; updateUIBtn('.p-o', b); }; pBox.appendChild(b); }); }
+    function setWeather() {
+        s.todayWeather = WEATHER_DATA[Math.floor(Math.random() * WEATHER_DATA.length)];
+        document.getElementById('weather-icon').innerText = s.todayWeather.i;
+        document.getElementById('weather-text').innerText = `${s.todayWeather.t} (${s.todayWeather.desc})`;
+    }
+
+    function renderLocs() { const lBox = document.getElementById('loc-list'); lBox.innerHTML = ''; BIZ_DATA[s.type].locs.forEach((l) => { let b = document.createElement('div'); b.className = 'opt-btn l-o'; b.innerHTML = `<span><b>${l.n}</b></span><span style="color:var(--text-dim)">${l.r/10000}만</span>`; b.onclick = () => { s.loc = l; updateUIBtn('.l-o', b); renderPrices(); }; lBox.appendChild(b); }); }
+    function renderPrices() { const pBox = document.getElementById('price-list'); pBox.innerHTML = ''; ['실속', '표준', '프리미엄'].forEach((n, i) => { let b = document.createElement('div'); b.className = 'opt-btn p-o'; b.innerHTML = `<span><b>${n}</b></span><span style="color:var(--accent)">${BIZ_DATA[s.type].p[i].toLocaleString()}원</span>`; b.onclick = () => { s.price = BIZ_DATA[s.type].p[i]; s.pIdx = i; updateUIBtn('.p-o', b); }; pBox.appendChild(b); }); }
     function updateUIBtn(cls, target) { document.querySelectorAll(cls).forEach(el => el.classList.remove('selected')); target.classList.add('selected'); }
-    function startGame() { if(!s.type || !s.loc || !s.price) return alert("설정 확인!"); s.money -= s.loc.r; document.getElementById('setup-screen').classList.add('hidden'); document.getElementById('play-screen').classList.remove('hidden'); updateMainUI(); }
+    
+    function startGame() { 
+        if(!s.type || !s.loc || !s.price) return alert("전략을 모두 선택해주세요!"); 
+        s.money -= s.loc.r; 
+        document.getElementById('setup-screen').classList.add('hidden'); 
+        document.getElementById('play-screen').classList.remove('hidden'); 
+        updateMainUI(); 
+    }
 
     function runDay() {
         const biz = BIZ_DATA[s.type];
-        const guests = Math.floor(biz.g[s.pIdx] * (Math.random() * (s.loc.w[1] - s.loc.w[0]) + s.loc.w[0]) * s.nextDayMod);
-        const profit = (guests * s.price) - Math.floor((guests * s.price) * (1 - biz.m)) - (Math.floor(s.loc.r / 30) + s.loc.l);
-        s.money += profit; s.weekly += profit; s.totalProfit += profit; s.nextDayMod = 1.0; updateMainUI();
+        
+        // 날씨와 이전 이벤트 배수를 모두 적용
+        const finalGuestMod = s.nextDayMod * s.todayWeather.m;
+        const guests = Math.floor(biz.g[s.pIdx] * (Math.random() * (s.loc.w[1] - s.loc.w[0]) + s.loc.w[0]) * finalGuestMod);
+        
+        const sales = guests * s.price;
+        const matCost = Math.floor(sales * (1 - biz.m));
+        const fixedExp = Math.floor(s.loc.r / 30) + s.loc.l;
+        const profit = sales - matCost - fixedExp;
+        
+        s.money += profit; s.weekly += profit; s.totalProfit += profit;
+        s.nextDayMod = 1.0; // 배수 초기화
+        updateMainUI();
+
         const modal = document.getElementById('modal-content');
-        modal.className = 'modal-card';
-        modal.innerHTML = `<h2>Day ${s.day} 정산</h2><div style="background:rgba(255,255,255,0.05); padding:20px; border-radius:1rem; text-align:left; margin:15px 0;"><div style="display:flex; justify-content:space-between;"><span>손님 수</span><b>${guests}명</b></div><div style="display:flex; justify-content:space-between; font-size:1.5rem; font-weight:900; margin-top:15px; border-top:1px solid var(--border); padding-top:10px;"><span>일일 순익</span><span style="color:${profit < 0 ? 'var(--danger)' : 'var(--primary)'}">${profit.toLocaleString()}원</span></div></div><button class="action-btn" onclick="checkEvent()">확인</button>`;
+        modal.innerHTML = `
+            <h2 style="color:var(--secondary); font-size:2rem; margin-bottom:10px;">Day ${s.day} 마감 영수증</h2>
+            <div style="background:rgba(255,255,255,0.03); padding:25px; border-radius:1.5rem; text-align:left; margin:20px 0; border:1px solid var(--border);">
+                <div style="display:flex; justify-content:space-between; margin-bottom:15px; font-size:1.1rem;">
+                    <span>총 방문객 수</span><b style="color:var(--accent)">${guests}명 <small>(${s.todayWeather.t})</small></b>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px; color:var(--text-dim);"><span>일일 총매출</span><span>+${sales.toLocaleString()}원</span></div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px; color:var(--danger);"><span>재료비/인건비</span><span>-${(matCost+fixedExp).toLocaleString()}원</span></div>
+                <div style="display:flex; justify-content:space-between; font-size:1.8rem; font-weight:900; margin-top:20px; border-top:1px dashed var(--border); padding-top:15px;">
+                    <span>순이익</span><span style="color:${profit < 0 ? 'var(--danger)' : 'var(--primary)'}">${profit.toLocaleString()}원</span>
+                </div>
+            </div>
+            <button class="action-btn" onclick="checkEvent()">서류 결재 및 퇴근</button>
+        `;
         document.getElementById('center-overlay').style.display = 'flex';
-        const l = document.createElement('div'); l.className = 'log-card'; l.style.borderLeftColor = profit < 0 ? 'var(--danger)' : 'var(--primary)'; l.innerHTML = `Day ${s.day}: <b>${profit.toLocaleString()}원</b>`; document.getElementById('log-box').prepend(l);
+
+        // 로그 추가
+        const l = document.createElement('div'); l.className = 'log-card'; 
+        l.style.borderLeftColor = profit < 0 ? 'var(--danger)' : 'var(--primary)'; 
+        l.innerHTML = `<div style="display:flex; justify-content:space-between;"><span><b>Day ${s.day}</b> ${s.todayWeather.i}</span><b style="color:${profit < 0 ? 'var(--danger)' : 'var(--primary)'}">${profit.toLocaleString()}원</b></div><div style="font-size:0.8rem; color:var(--text-dim); margin-top:5px;">방문객: ${guests}명</div>`; 
+        document.getElementById('log-box').prepend(l);
     }
 
-    function checkEvent() { if (s.eventDays.includes(s.day)) triggerEventUI(); else finishDay(); }
+    function checkEvent() { 
+        // 날씨 리셋
+        setWeather();
+        if (s.eventDays.includes(s.day)) triggerEventUI(); 
+        else finishDay(); 
+    }
 
     function triggerEventUI() {
         const events = [
-            { t: "📺 유튜버 협찬 제안", d: "홍보비 200만 원을 투자하시겠습니까?", a: [{p: 0.5, c:2000000, b:5.0, m:"초대박! 줄이 끊이지 않습니다."}, {p: 0.3, c:2000000, b:0.2, m:"악의적 편집으로 평판이 급락합니다."}, {p: 0.2, c:2000000, b:1.0, m:"그 사람은 유튜버가 아니라 사기꾼이 였습니다.."}], r: [{p: 0.5, c:0, b:1.0, m:"평소와 같은 하루입니다."},{p:0.5, c:0, b:0.2, m:"유튜버가 옆가게를 홍보하며, 손님이 줄었습니다."}] },
-            { t: "📦 식재료 공동구매", d: "도매상에서 대량 구매(150만 원)를 권유합니다.", a: [{p: 0.6, c:1500000, b:3.3, m:"원가 절감에 성공하여 마진이 크게 개선되었습니다."}, {p: 0.4, c:1500000, b:1.0, m:"창고 보관 실패로 재료를 폐기했습니다."}], r: [{p: 1.0, c:0, b:1.0, m:"기존 방식을 유지합니다."}] },
-            { t: "🤝 인근 축제 개최", d: "가게 앞 공원에서 축제가 열립니다. 가판대 설치(120만 원)를 할까요?", a: [{p: 0.65, c:1200000, b:4.5, m:"축제 인파가 모두 우리 가게로 몰립니다!"}, {p: 0.35, c:1200000, b:0.8, m:"비가 내려 축제가 취소되었습니다."}], r: [{p: 1.0, c:0, b:0.6, m:"축제 소음으로 일반 손님이 줄었습니다."}] },
-            { t: "🎨 인테리어 리뉴얼", d: "분위기를 바꾸기 위해 300만 원을 들여 공사하시겠습니까?", a: [{p: 0.5, c:3000000, b:6.0, m:"SNS 명소로 등극하며 방문객이 폭증합니다."}, {p: 0.5, c:3000000, b:1.1, m:"깔끔해졌지만 비용 부담이 큽니다."}], r: [{p: 1.0, c:0, b:0.9, m:"가게가 조금 낡아 보이기 시작합니다."}] },
-            { t: "🍳 신메뉴 개발 도전", d: "연구 비용 50만 원을 들여 신메뉴를 출시할까요?", a: [{p: 0.5, c:500000, b:3.0, m:"대박 메뉴 탄생! 베스트셀러가 되었습니다."}, {p: 0.5, c:500000, b:0.7, m:"괴식 판정... 손님들의 반응이 싸늘합니다."}], r: [{p: 1.0, c:0, b:1.0, m:"기존 메뉴에 집중합니다."}] },
-            { t: "🌟 방송 출연 기회", d: "전국 방송에 출연할 기회입니다. 출연비 500만 원을 지불할까요?", a: [{p: 0.5, c:5000000, b:10.0, m:"전설의 맛집 등극! 어마어마한 손님이 찾아옵니다."}, {p: 0.5, c:5000000, b:0.5, m:"편집 실수로 가게가 비위생적으로 나갔습니다."}], r: [{p: 1.0, c:0, b:1.0, m:"기회를 고사했습니다."}] },
-            { t: "🧼 대청소의 날", d: "가게 이미지를 위해 30만 원을 들여 대청소를 할까요?", a: [{p: 1.0, c:300000, b:2.4, m:"매장이 반짝거립니다. 단골들의 만족도가 높습니다."}], r: [{p: 1.0, c:0, b:1.0, m:"청결 상태가 보통입니다."}] },
-            { t: "📞 단체 손님", d: "단체 손님을 위한 식재료로 100만원을 쓰시겠습니까?", a: [{p: 0.9, c:1000000, b:2.0, m:"단체 손님들이 만족스러워합니다."}, {p: 0.1, c:1000000, b:15.0, m:"알고보니 단체 손님들은 이X용, 잰X황이였습니다."}], r: [{p: 1.0, c:0, b:1.0, m:"너무나 아쉬운 선택입니다."}] },
-            { t: "💣가스점검    ", d: "가스점검비로 100만원을 쓰시겠습니까?", a: [{p: 0.8, c:1000000, b:2.0, m:"안전이 확인되었습니다."}, {p: 0.2, c:1500000, b:1.0, m:"가스가 누출되었었습니다. 수리비로 50만원을 사용했습니다."}], r: [{p: 0.8, c:2000000, b:0.1, m:"가스폭발 사고로 수리비 200만원이 들었습니다."},{p: 0.2, c:0, b:1.0, m:"다행히 사고는 없었습니다.."}] }
+            { t: "📺 유튜버 홍보 제안", cost: 2000000, 
+              win: { m: "알고리즘 대폭발! 내일 엄청난 인파가 몰려와 투자금을 완벽히 회수합니다.", b: 6.0 }, 
+              lose: { m: "조회수가 처참합니다... 투자금을 날렸습니다.", b: 0.8 } },
+            { t: "🌟 지상파 맛집 프로그램", cost: 5000000, 
+              win: { m: "전국구 맛집 등극! 내일 역대급 매출로 500만 원을 가볍게 뽑아냅니다.", b: 12.0 }, 
+              lose: { m: "시청률 0%대... 손님이 오히려 줄었습니다.", b: 0.3 } },
+            { t: "🍳 특급 레시피 전수", cost: 1500000, 
+              win: { m: "신메뉴가 입소문을 탔습니다! 전수비를 넘어서는 엄청난 마진이 예상됩니다.", b: 4.5 }, 
+              lose: { m: "너무 난해한 맛이라 재료만 버렸습니다.", b: 0.7 } },
+            { t: "🏫 인근 고등학교 단체 예약", cost: 800000, 
+              win: { m: "최동민, 한효범 등 31명의 반 학생들이 엄청난 먹성을 자랑하며 대박을 냈습니다!", b: 5.0 }, 
+              lose: { m: "충격적인 노쇼(No-show)... 준비한 재료를 모두 폐기합니다.", b: 0.4 } },
+            { t: "🏢 대기업 회식 유치", cost: 3000000, 
+              win: { m: "법인카드의 기적! 엄청난 회식 스케일로 투자금을 바로 회수합니다.", b: 8.0 }, 
+              lose: { m: "경쟁 업체로 회식 장소가 변경되었습니다.", b: 0.6 } }
         ];
 
-        // 위생 점검을 낮은 확률로 추가
-        if(Math.random() < 0.15) {
-            events.push({ t: "🧹 정기 위생 검사", d: "검사관이 왔습니다. 100만 원을 들여 긴급 조치를 할까요?", a: [{p: 0.9, c:1000000, b:1.2, m:"무사 통과! 청결 점수가 상승합니다."},{p: 0.1, c:1000000, b:0.01, m:"청소중 사고가 발생했습니다."}] , r: [{p: 0.2, c:0, b:1.0, m:"다행히 그냥 지나갔습니다."}, {p: 0.8, c:2500000, b:0.4, m:"벌금 폭탄! 큰 손실을 입었습니다."}] });
+        // 위생점검 등 순수 지출/손실 이벤트 (가끔 등장)
+        if(Math.random() < 0.2) {
+            events.push({ t: "🧹 위생 점검단 급습", cost: 1000000,
+                win: { m: "완벽한 대처로 안심 식당 마크를 받았습니다. 단골이 늘어납니다.", b: 1.5 },
+                lose: { m: "돈을 썼는데도 지적을 받았습니다. 평판이 하락합니다.", b: 0.7 }
+            });
         }
 
         s.currentEvent = events[Math.floor(Math.random() * events.length)];
         const modal = document.getElementById('modal-content');
-        modal.innerHTML = `<div style="border:3px solid var(--accent); padding:20px; border-radius:1.5rem;"><h2>${s.currentEvent.t}</h2><p>${s.currentEvent.d}</p><div style="display:flex; gap:10px; margin-top:20px;"><button class="choice-btn" style="background:var(--primary); flex:1;" onclick='handleProbEvent(true)'>수락</button><button class="choice-btn" style="background:var(--danger); flex:1;" onclick='handleProbEvent(false)'>거절</button></div></div>`;
+        modal.innerHTML = `
+            <div style="border:2px solid var(--accent); padding:30px; border-radius:1.5rem; background:rgba(251, 191, 36, 0.03);">
+                <div style="font-size:3rem; margin-bottom:10px;">🚨</div>
+                <h2 style="color:var(--accent); font-size:1.8rem;">${s.currentEvent.t}</h2>
+                <p style="font-size:1.1rem; margin:15px 0; color:var(--text-dim);">진행을 위해 <b style="color:var(--text-main);">${s.currentEvent.cost.toLocaleString()}원</b>의 준비 자금이 필요합니다.</p>
+                <div style="display:flex; gap:15px; margin-top:30px;">
+                    <button class="choice-btn" style="background:var(--primary); flex:1;" onclick='handleEvent(true)'>투자 진행</button>
+                    <button class="choice-btn" style="background:var(--danger); flex:1;" onclick='handleEvent(false)'>안전 제일 (거절)</button>
+                </div>
+            </div>`;
     }
 
-    function handleProbEvent(isAccept) {
-        const pool = isAccept ? s.currentEvent.a : s.currentEvent.r;
-        const rand = Math.random(); let cum = 0; let res = pool[pool.length-1];
-        for(let p of pool) { cum += p.p; if(rand < cum) { res = p; break; } }
-        s.money -= res.c; s.nextDayMod = res.b; updateMainUI();
-        document.getElementById('modal-content').innerHTML = `<h2>결과</h2><p style="font-size:1.4rem; font-weight:bold;">"${res.m}"</p><p style="color:var(--danger)">${res.c > 0 ? '-'+res.c.toLocaleString()+'원' : ''}</p><button class="action-btn" onclick="finishDay()">계속</button>`;
+    function handleEvent(isAccept) {
+        if(!isAccept) return finishDay();
+
+        s.money -= s.currentEvent.cost; 
+        
+        const isWin = Math.random() < 0.65; // 65% 확률로 대박
+        const result = isWin ? s.currentEvent.win : s.currentEvent.lose;
+        s.nextDayMod = result.b; 
+
+        updateMainUI();
+
+        const modal = document.getElementById('modal-content');
+        modal.innerHTML = `
+            <h2 style="color:${isWin ? 'var(--primary)' : 'var(--danger)'}; font-size:2.5rem; margin-bottom:20px;">${isWin ? '🎉 대성공!' : '💀 뼈아픈 실패...'}</h2>
+            <p style="font-size:1.3rem; line-height:1.5;">"${result.m}"</p>
+            <div style="padding:20px; background:rgba(0,0,0,0.3); border-radius:1rem; margin:25px 0; border:1px solid rgba(255,255,255,0.05);">
+                <p style="color:var(--danger); margin-bottom:10px; font-size:1.1rem;">💸 투자 지출: -${s.currentEvent.cost.toLocaleString()}원</p>
+                <p style="color:var(--accent); font-size:1.2rem; font-weight:900;">
+                    ${isWin ? `📈 내일 매출 효과: x${result.b}배 폭증 예정!` : `📉 내일 매출 효과: x${result.b}배 급감 예정...`}
+                </p>
+            </div>
+            <button class="action-btn" onclick="finishDay()">마음의 준비를 하고 내일로</button>
+        `;
     }
 
     function finishDay() { if (s.day % 7 === 0) startWeeklyLoading(); else nextDay(); }
-    function startWeeklyLoading() { const modal = document.getElementById('modal-content'); modal.innerHTML = `<div class="loader-container"><div class="spinner"></div><h2 style="color:var(--accent)">제 ${s.day/7}주차 장사 분석 중...</h2></div>`; setTimeout(showWeeklyReport, 2000); }
-    function showWeeklyReport() { const weekNum = s.day / 7; const modal = document.getElementById('modal-content'); modal.innerHTML = `<h2>주간 결산 완료</h2><div style="font-size:3rem; font-weight:900; color:var(--accent); margin:20px 0;">+${s.weekly.toLocaleString()}원</div><button class="action-btn" onclick="startNewWeek()">다음 주로</button>`; const card = document.createElement('div'); card.innerHTML = `WEEK ${weekNum}: <b>${s.weekly.toLocaleString()}원</b>`; card.style.background="rgba(255,255,255,0.05)"; card.style.padding="10px"; card.style.borderRadius="10px"; card.style.marginBottom="5px"; document.getElementById('report-list').prepend(card); }
-    function startNewWeek() { s.weekly = 0; nextDay(); }
-    function nextDay() { s.day++; if (s.day > 30) showFinalResult(); else { updateMainUI(); document.getElementById('center-overlay').style.display = 'none'; } }
+    
+    function startWeeklyLoading() { 
+        const modal = document.getElementById('modal-content'); 
+        modal.innerHTML = `<div class="spinner"></div><h2 style="color:var(--accent)">${s.day/7}주차 재무 상태 분석 중...</h2><p style="color:var(--text-dim); margin-top:10px;">빅데이터 기반 실적 산출 중입니다.</p>`; 
+        setTimeout(showWeeklyReport, 1500); 
+    }
 
-    function showFinalResult() { const modal = document.getElementById('modal-content'); modal.className = 'modal-card ending-card'; updateFinalUI(); }
+    function showWeeklyReport() { 
+        const weekNum = s.day / 7; 
+        const modal = document.getElementById('modal-content'); 
+        modal.innerHTML = `
+            <h2 style="color:var(--secondary); margin-bottom:10px;">WEEK ${weekNum} 리포트</h2>
+            <p style="color:var(--text-dim)">이번 주간 발생한 순수익입니다.</p>
+            <div style="font-size:3.5rem; font-weight:900; color:${s.weekly >= 0 ? 'var(--accent)' : 'var(--danger)'}; margin:30px 0;">
+                ${s.weekly > 0 ? '+' : ''}${s.weekly.toLocaleString()}원
+            </div>
+            <button class="action-btn" onclick="startNewWeek()">다음 주간 영업 개시</button>
+        `; 
+        const card = document.createElement('div'); 
+        card.className = 'week-report-card';
+        card.innerHTML = `<div style="display:flex; justify-content:space-between; align-items:center;"><h4 style="margin:0; color:var(--text-dim);">WEEK ${weekNum}</h4><b style="font-size:1.2rem; color:${s.weekly >= 0 ? 'var(--accent)' : 'var(--danger)'};">${s.weekly.toLocaleString()}원</b></div>`; 
+        document.getElementById('report-list').prepend(card); 
+    }
+
+    function startNewWeek() { s.weekly = 0; nextDay(); }
+    
+    function nextDay() { 
+        s.day++; 
+        if (s.day > 30) showFinalResult(); 
+        else { 
+            updateMainUI(); 
+            document.getElementById('center-overlay').style.display = 'none'; 
+            document.getElementById('progress-bar').style.width = `${(s.day / 30) * 100}%`;
+        } 
+    }
+
+    function showFinalResult() { 
+        const modal = document.getElementById('modal-content'); 
+        modal.className = 'modal-card ending-card'; 
+        updateFinalUI(); 
+    }
 
     function updateFinalUI(bonus = 0) {
         const modal = document.getElementById('modal-content');
         const finalTotal = s.money + bonus;
+        
+        let rank = "초보 사장님"; let rColor = "#94a3b8";
+        if(finalTotal > 30000000) { rank = "🔥 외식업계의 전설"; rColor = "#ef4444"; }
+        else if(finalTotal > 20000000) { rank = "👑 골목 상권의 지배자"; rColor = "#fbbf24"; }
+        else if(finalTotal > 10000000) { rank = "💼 훌륭한 경영인"; rColor = "#10b981"; }
+
         modal.innerHTML = `
-            <h1 style="font-size:3.5rem; color:var(--accent); margin:0;">최종 성적표</h1>
-            <div style="background:rgba(255,255,255,0.05); padding:30px; border-radius:1.5rem; margin:25px 0; text-align:left;">
-                <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><span>보유 자산</span><span>${s.money.toLocaleString()}원</span></div>
-                <div style="display:flex; justify-content:space-between; color:var(--primary);"><span>총 누적 순수익</span><span>+${s.totalProfit.toLocaleString()}원</span></div>
-                ${bonus > 0 ? `<div style="display:flex; justify-content:space-between; color:var(--accent); margin-top:10px; border-top:1px dashed var(--border); padding-top:10px;"><span>쿠폰 보너스(10%)</span><span>+${bonus.toLocaleString()}원</span></div>` : ''}
-                <hr style="border:none; border-top:2px solid var(--border); margin:20px 0;">
-                <div style="display:flex; justify-content:space-between; font-size:2.2rem; font-weight:900;">
-                    <span>최종 합산 자산</span>
+            <h3 style="color:var(--text-dim); margin:0;">30일 영업 종료</h3>
+            <h1 style="font-size:3.5rem; color:${rColor}; margin:10px 0 30px;">${rank}</h1>
+            
+            <div style="background:rgba(0,0,0,0.3); padding:30px; border-radius:1.5rem; margin:25px 0; text-align:left; border:1px solid rgba(255,255,255,0.05);">
+                <div style="display:flex; justify-content:space-between; margin-bottom:15px; font-size:1.2rem;"><span>최종 금고 잔액</span><span style="font-weight:bold;">${s.money.toLocaleString()}원</span></div>
+                <div style="display:flex; justify-content:space-between; color:var(--primary); font-size:1.2rem;"><span>총 누적 순수익</span><span style="font-weight:bold;">+${s.totalProfit.toLocaleString()}원</span></div>
+                ${bonus > 0 ? `<div style="display:flex; justify-content:space-between; color:var(--secondary); margin-top:15px; border-top:1px dashed var(--border); padding-top:15px; font-size:1.2rem;"><span>💎 쿠폰 보너스 합산</span><span style="font-weight:bold;">+${bonus.toLocaleString()}원</span></div>` : ''}
+                
+                <div style="display:flex; justify-content:space-between; font-size:2.5rem; font-weight:900; margin-top:20px; padding-top:20px; border-top:2px solid var(--border);">
+                    <span>총합 자산</span>
                     <span style="color:var(--accent)">${finalTotal.toLocaleString()}원</span>
                 </div>
             </div>
-            ${bonus === 0 ? `<div id="coupon-section"><input type="text" id="coupon-code" class="coupon-input" placeholder="비밀 쿠폰 입력"><button class="action-btn" style="background:var(--secondary);" onclick="applyCoupon()">보너스 합산하기</button></div>` : `<h2 style="color:var(--primary)">💰 모든 정산이 끝났습니다!</h2>`}
-            <button class="action-btn" style="background:var(--border); margin-top:10px;" onclick="location.reload()">새 게임 시작</button>
+            
+            ${bonus === 0 ? `
+            <div style="display:flex; gap:10px;">
+                <input type="text" id="coupon-code" class="coupon-input" style="margin:0; flex:2;" placeholder="비밀 쿠폰 입력">
+                <button class="action-btn" style="margin:0; flex:1; border-radius:1rem;" onclick="applyCoupon()">적용</button>
+            </div>` : `<h2 style="color:var(--primary); margin:20px 0;">정산이 모두 완료되었습니다.</h2>`}
+            
+            <button class="action-btn" style="background:var(--border); margin-top:20px;" onclick="location.reload()">새로운 전설 쓰기</button>
         `;
         document.getElementById('center-overlay').style.display = 'flex';
     }
 
-    function applyCoupon() { if (document.getElementById('coupon-code').value ==='0318') { const bonusAmount = Math.floor(s.totalProfit * 0.1); updateFinalUI(bonusAmount); } else { alert("쿠폰 코드를 확인하세요."); } }
-    function updateMainUI() { document.getElementById('day-num').innerText = Math.min(s.day, 30); document.getElementById('money-display').innerText = s.money.toLocaleString() + "원"; }
+    function applyCoupon() { 
+        if (document.getElementById('coupon-code').value === '0318') { 
+            const bonusAmount = Math.floor(s.totalProfit * 0.1); 
+            updateFinalUI(bonusAmount); 
+        } else { alert("존재하지 않는 쿠폰입니다."); } 
+    }
+    
+    function updateMainUI() { 
+        document.getElementById('day-num').innerText = `Day ${Math.min(s.day, 30)}`; 
+        document.getElementById('money-display').innerText = s.money.toLocaleString(); 
+    }
+    
     init();
 </script>
 </body>
-
 </html>
-
-
-
-
