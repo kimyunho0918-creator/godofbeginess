@@ -1,0 +1,99 @@
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+:root {
+    --primary: #10b981; --primary-hover: #059669;
+    --secondary: #3b82f6; --secondary-hover: #2563eb;
+    --accent: #fbbf24; --danger: #f43f5e;
+    --dark-bg: #09090b; --panel-bg: rgba(30, 41, 59, 0.7);
+    --text-main: #f8fafc; --text-dim: #94a3b8;
+    --border: rgba(255, 255, 255, 0.1);
+}
+
+* { box-sizing: border-box; font-family: 'Pretendard', sans-serif; outline: none; margin: 0; padding: 0; }
+
+body { 
+    background: radial-gradient(circle at top left, #1e1b4b, var(--dark-bg)), url('https://www.transparenttextures.com/patterns/stardust.png'); 
+    display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; color: var(--text-main); 
+}
+
+#game-frame { 
+    background: var(--panel-bg); width: 95vw; max-width: 1200px; height: 90vh; 
+    border-radius: 2rem; display: flex; flex-direction: column; position: relative; 
+    overflow: hidden; border: 1px solid var(--border); box-shadow: 0 30px 60px rgba(0,0,0,0.6); 
+    backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+}
+
+.hidden { display: none !important; }
+
+/* 상단 헤더바 */
+.game-header { 
+    background: rgba(0,0,0,0.3); padding: 1.5rem 2.5rem; display: flex; justify-content: space-between; 
+    align-items: center; border-bottom: 1px solid var(--border); 
+}
+.header-stat { display: flex; flex-direction: column; align-items: center; }
+.header-stat span { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
+.header-stat b { font-size: 1.8rem; font-weight: 900; }
+
+.progress-container { width: 200px; background: rgba(255,255,255,0.1); height: 8px; border-radius: 4px; overflow: hidden; margin-top: 5px; }
+.progress-bar { height: 100%; background: var(--secondary); transition: width 0.3s ease; }
+
+/* 메인 레이아웃 (3단) */
+.main-content { display: flex; flex: 1; overflow: hidden; }
+
+/* 1단: 컨트롤 */
+.control-panel { flex: 1; padding: 2rem; display: flex; flex-direction: column; gap: 1rem; border-right: 1px solid var(--border); background: rgba(0,0,0,0.2); }
+.status-card { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 1.5rem; padding: 1.5rem; text-align: center; }
+.weather-icon { font-size: 3rem; margin-bottom: 10px; animation: float 3s ease-in-out infinite; }
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+.buff-item { font-size: 0.9rem; padding: 8px; border-radius: 8px; margin-top: 8px; background: rgba(0,0,0,0.4); border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;}
+
+/* 2단: 실시간 로그 */
+.log-area { flex: 1.5; padding: 2rem; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem; scroll-behavior: smooth; }
+.log-card { 
+    background: rgba(255,255,255,0.05); padding: 1.2rem; border-radius: 1rem; 
+    border-left: 5px solid var(--secondary); font-size: 1rem; line-height: 1.5;
+    animation: slideInLeft 0.3s ease-out forwards; opacity: 0; transform: translateX(-20px);
+}
+@keyframes slideInLeft { to { opacity: 1; transform: translateX(0); } }
+
+/* 3단: 주간 리포트 */
+.report-area { flex: 1; padding: 2rem; background: rgba(0,0,0,0.3); border-left: 1px solid var(--border); overflow-y: auto; }
+.week-report-card { 
+    background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01)); 
+    border: 1px solid var(--border); padding: 1.5rem; border-radius: 1.2rem; margin-bottom: 1rem; 
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    animation: slideInLeft 0.4s ease-out forwards;
+}
+
+/* 버튼 및 오버레이 */
+.action-btn { 
+    width: 100%; background: linear-gradient(135deg, var(--primary), var(--primary-hover)); 
+    color: white; border: none; padding: 1.5rem; border-radius: 1.2rem; font-size: 1.3rem; 
+    font-weight: 900; cursor: pointer; transition: all 0.2s; box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3); text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+.action-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 25px rgba(16, 185, 129, 0.4); }
+.action-btn:active { transform: translateY(2px); box-shadow: 0 5px 10px rgba(16, 185, 129, 0.3); }
+
+.choice-btn { width: 100%; padding: 1.2rem; border-radius: 1rem; border: none; font-size: 1.1rem; font-weight: 800; cursor: pointer; color: white; transition: 0.2s; margin-top: 10px; }
+.choice-btn:hover { filter: brightness(1.1); transform: scale(1.02); }
+
+.overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 20px; }
+.modal-card { background: var(--dark-bg); width: 100%; max-width: 550px; padding: 3rem; border-radius: 2rem; border: 1px solid rgba(255,255,255,0.2); text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.8); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+@keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+/* 셋업 화면 */
+#setup-screen { flex: 1; padding: 4rem; overflow-y: auto; display: flex; flex-direction: column; justify-content: center; }
+.setup-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-bottom: 3rem; }
+.setup-card { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 1.5rem; padding: 2rem; backdrop-filter: blur(10px); }
+.setup-card h4 { color: var(--text-dim); margin-bottom: 1.5rem; font-size: 1.1rem; letter-spacing: 2px; }
+.opt-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-main); padding: 1.2rem; border-radius: 1rem; cursor: pointer; margin-bottom: 15px; width: 100%; text-align: left; transition: all 0.2s; display: flex; justify-content: space-between; align-items: center; }
+.opt-btn:hover { background: rgba(255,255,255,0.1); }
+.opt-btn.selected { background: rgba(59, 130, 246, 0.2); border-color: var(--secondary); box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
+
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+
+.text-green { color: var(--primary); }
+.text-red { color: var(--danger); }
+.text-yellow { color: var(--accent); }
